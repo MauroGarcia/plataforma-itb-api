@@ -1,0 +1,22 @@
+﻿Scaffold-DbContext -Connection Name=ConnectionApplicationData Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Context ItbDadosContext -t Peda_Matriculas, Peda_CursosTurmas, Peda_Cursos, Peda_Alunos, Fina_ParcelasAlunos, Acad_DocumentosAlunosPostados, Mktg_BonusAlunos, Avap_MensagemTutoria, Avap_TiraDuvidas, Peda_MatriculasAnotacoesAulas, Peda_MatriculasExcluidas, Fina_ParcelasControle -f
+
+install-package Microsoft.EntityFrameworkCore.Proxies
+
+if (!optionsBuilder.IsConfigured)
+{
+    IConfigurationRoot configuration = new ConfigurationBuilder()
+    .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+    .AddJsonFile("appsettings.json")
+    .Build();
+    optionsBuilder.UseSqlServer(configuration.GetConnectionString("ConnectionApplicationData"));
+}
+
+#DbContext
+protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+{
+    if (!optionsBuilder.IsConfigured)
+    {
+        optionsBuilder.UseSqlServer("Name=ConnectionApplicationData");
+        optionsBuilder.UseLazyLoadingProxies();
+    }
+}
