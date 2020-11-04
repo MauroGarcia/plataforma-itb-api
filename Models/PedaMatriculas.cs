@@ -13,6 +13,7 @@ namespace PlataformaITB.API.Models
             FinaParcelasAlunos = new HashSet<FinaParcelasAlunos>();
             MktgBonusAlunosIdMatriculaDestinoNavigation = new HashSet<MktgBonusAlunos>();
             MktgBonusAlunosIdMatriculaOrigemNavigation = new HashSet<MktgBonusAlunos>();
+            PedaMatriculasAnotacoes = new HashSet<PedaMatriculasAnotacoes>();
             PedaMatriculasAnotacoesAulas = new HashSet<PedaMatriculasAnotacoesAulas>();
         }
 
@@ -111,6 +112,7 @@ namespace PlataformaITB.API.Models
         public virtual ICollection<FinaParcelasAlunos> FinaParcelasAlunos { get; set; }
         public virtual ICollection<MktgBonusAlunos> MktgBonusAlunosIdMatriculaDestinoNavigation { get; set; }
         public virtual ICollection<MktgBonusAlunos> MktgBonusAlunosIdMatriculaOrigemNavigation { get; set; }
+        public virtual ICollection<PedaMatriculasAnotacoes> PedaMatriculasAnotacoes { get; set; }
         public virtual ICollection<PedaMatriculasAnotacoesAulas> PedaMatriculasAnotacoesAulas { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using PlataformaITB.API.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace PlataformaITB.API.Controllers
@@ -64,6 +65,28 @@ namespace PlataformaITB.API.Controllers
             {
                 return new BadRequestObjectResult(new { success = false, message = e.Message });
             }
+        }
+
+        [HttpPost("codigo-matricula/{codigoMatricula}/cancelar")]
+        public IActionResult CancelarMatriculaPorCodigoMatricula(string codigoMatricula, [FromBody] object sistemaOrigem)
+        {
+            try
+            {
+                _matriculaService.CancelarMatricula(codigoMatricula, $"api.plataformaitb ({sistemaOrigem.ToString()}) - Matrícula cancelada", "api.plataformaitb.com.br");
+            }
+            catch (Exception e)
+            {
+                return new BadRequestObjectResult(new { success = false, message = e.Message });
+                //return BadRequest(e.Message);
+            }
+
+            return new OkObjectResult(new { success = true, message = string.Empty });
+        }
+
+        [HttpPost("{id}/cancelar")]
+        public IActionResult CancelarMatriculaPorId(int id)
+        {
+            return Ok();
         }
     }
 }

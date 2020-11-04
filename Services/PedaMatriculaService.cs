@@ -38,10 +38,9 @@ namespace PlataformaITB.API.Services
             {
                 try
                 {
-
                     // Testa tentativa anterior de excluir (evitar erros)
                     var testaMatriculaExcluida = _itbDadosContext.PedaMatriculasExcluidas.SingleOrDefault(m => m.IdMatricula == matricula.IdMatricula);
-                    
+
                     if (testaMatriculaExcluida != null)
                     {
                         _itbDadosContext.PedaMatriculasExcluidas.Remove(testaMatriculaExcluida);
@@ -137,9 +136,55 @@ namespace PlataformaITB.API.Services
                 catch (Exception ex)
                 {
                     dbContextTransaction.Rollback();
-                    throw new Exception("Erro ao deletar matrícula");                    
+                    throw new Exception("Erro ao deletar matrícula");
                 }
-            }           
+            }
+        }
+
+        public void CancelarMatricula(string codigoMatricula, string motivoCancelamento, string loginUsuario)
+        {
+            var matricula = _itbDadosContext.PedaMatriculas.Include(c => c.IdAlunoNavigation)
+                                               .FirstOrDefault(x => x.CodigoMatricula.Equals(codigoMatricula));
+
+            if (matricula == null)
+                throw new NullReferenceException("Matrícula não encontrada");
+
+            using (var dbContextTransaction = _itbDadosContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Parcelas 
+                    var parcelas = _itbDadosContext.FinaParcelasAlunos.Where(p => p.IdMatricula == matricula.IdMatricula && p.IsPago == false).ToList();
+                    parcelas.ForEach(p => p.IsCancelado = true);
+                    _itbDadosContext.SaveChanges();
+
+                    // Matricula
+                    matricula.IsCancelada = true;
+                    matricula.DataCancelou = DateTime.Now;
+                    matricula.UsuarioCancelou = loginUsuario;
+                    matricula.MotivoCancelamento = motivoCancelamento;
+                    _itbDadosContext.PedaMatriculas.Update(matricula);
+                    _itbDadosContext.SaveChanges();
+
+                    // Matricula Anotações
+                    var matriculaAnotacao = new PedaMatriculasAnotacoes()
+                    {
+                        DataAnotacao = DateTime.Now,
+                        IdMatricula = matricula.IdMatricula,
+                        TextoAnotacao = "Matrícula cancelada",
+                        UsuarioPostou = loginUsuario
+                    };
+                    _itbDadosContext.PedaMatriculasAnotacoes.Add(matriculaAnotacao);
+                    _itbDadosContext.SaveChanges();
+
+                    dbContextTransaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    dbContextTransaction.Rollback();
+                    throw new Exception("Erro ao cancelar matrícula");
+                }
+            }
         }
 
         private void AtualizarTurma(int idTurma)

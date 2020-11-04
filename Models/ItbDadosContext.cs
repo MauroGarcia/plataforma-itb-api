@@ -25,6 +25,7 @@ namespace PlataformaITB.API.Models
         public virtual DbSet<PedaCursos> PedaCursos { get; set; }
         public virtual DbSet<PedaCursosTurmas> PedaCursosTurmas { get; set; }
         public virtual DbSet<PedaMatriculas> PedaMatriculas { get; set; }
+        public virtual DbSet<PedaMatriculasAnotacoes> PedaMatriculasAnotacoes { get; set; }
         public virtual DbSet<PedaMatriculasAnotacoesAulas> PedaMatriculasAnotacoesAulas { get; set; }
         public virtual DbSet<PedaMatriculasExcluidas> PedaMatriculasExcluidas { get; set; }
 
@@ -33,8 +34,6 @@ namespace PlataformaITB.API.Models
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseSqlServer("Name=ConnectionApplicationData");
-                //.EnableSensitiveDataLogging();
-                //optionsBuilder.UseLazyLoadingProxies();
             }
         }
 
@@ -1134,6 +1133,38 @@ namespace PlataformaITB.API.Models
                     .WithMany(p => p.PedaMatriculas)
                     .HasForeignKey(d => d.IdTurma)
                     .HasConstraintName("FK_Peda_Matriculas_Peda_CursosTurmas");
+            });
+
+            modelBuilder.Entity<PedaMatriculasAnotacoes>(entity =>
+            {
+                entity.HasKey(e => e.IdAnotacao);
+
+                entity.ToTable("Peda_MatriculasAnotacoes");
+
+                entity.HasIndex(e => e.IdMatricula)
+                    .HasName("IX_Peda_MatriculasAnotacoes");
+
+                entity.Property(e => e.IdAnotacao).HasColumnName("idAnotacao");
+
+                entity.Property(e => e.DataAnotacao)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.IdMatricula).HasColumnName("idMatricula");
+
+                entity.Property(e => e.TextoAnotacao)
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                entity.Property(e => e.UsuarioPostou)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsFixedLength();
+
+                entity.HasOne(d => d.IdMatriculaNavigation)
+                    .WithMany(p => p.PedaMatriculasAnotacoes)
+                    .HasForeignKey(d => d.IdMatricula)
+                    .HasConstraintName("FK_Peda_MatriculasAnotacoes_Peda_Matriculas");
             });
 
             modelBuilder.Entity<PedaMatriculasAnotacoesAulas>(entity =>
