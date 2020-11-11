@@ -68,16 +68,15 @@ namespace PlataformaITB.API.Controllers
         }
 
         [HttpPost("codigo-matricula/{codigoMatricula}/cancelar")]
-        public IActionResult CancelarMatriculaPorCodigoMatricula(string codigoMatricula, [FromBody] object sistemaOrigem)
+        public IActionResult CancelarMatriculaPorCodigoMatricula(string codigoMatricula, [FromBody] CancelarMatriculaModel cancelarMatriculaModel)
         {
             try
             {
-                _matriculaService.CancelarMatricula(codigoMatricula, $"api.plataformaitb ({sistemaOrigem.ToString()}) - Matrícula cancelada", "api.plataformaitb.com.br");
+                _matriculaService.CancelarMatricula(codigoMatricula, $"api.plataformaitb ({cancelarMatriculaModel.SistemaOrigem}) - Matrícula cancelada", "api.plataformaitb.com.br");
             }
             catch (Exception e)
             {
                 return new BadRequestObjectResult(new { success = false, message = e.Message });
-                //return BadRequest(e.Message);
             }
 
             return new OkObjectResult(new { success = true, message = string.Empty });
@@ -88,5 +87,10 @@ namespace PlataformaITB.API.Controllers
         {
             return Ok();
         }
+    }
+
+    public class CancelarMatriculaModel
+    {
+        public string SistemaOrigem { get; set; }
     }
 }
