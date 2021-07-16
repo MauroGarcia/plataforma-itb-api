@@ -8,6 +8,7 @@ namespace PlataformaITB.API.Models
         public PedaMatriculas()
         {
             AcadDocumentosAlunosPostados = new HashSet<AcadDocumentosAlunosPostados>();
+            AcadProficienciaAcademica = new HashSet<AcadProficienciaAcademica>();
             AvapMensagemTutoria = new HashSet<AvapMensagemTutoria>();
             AvapTiraDuvidas = new HashSet<AvapTiraDuvidas>();
             FinaParcelasAlunos = new HashSet<FinaParcelasAlunos>();
@@ -102,11 +103,15 @@ namespace PlataformaITB.API.Models
         public bool? IsLiberaTutoria { get; set; }
         public bool? IsLiberaAvPresencial { get; set; }
         public bool? IsOficinaConcluida { get; set; }
+        public bool? IsExperimental { get; set; }
+        public DateTime? DataInicioPeriodoExperimental { get; set; }
 
         public virtual PedaAlunos IdAlunoNavigation { get; set; }
+        public virtual PedaCursosBlocosTematicos IdBlocoAtualNavigation { get; set; }
         public virtual PedaCursos IdCursoNavigation { get; set; }
         public virtual PedaCursosTurmas IdTurmaNavigation { get; set; }
         public virtual ICollection<AcadDocumentosAlunosPostados> AcadDocumentosAlunosPostados { get; set; }
+        public virtual ICollection<AcadProficienciaAcademica> AcadProficienciaAcademica { get; set; }
         public virtual ICollection<AvapMensagemTutoria> AvapMensagemTutoria { get; set; }
         public virtual ICollection<AvapTiraDuvidas> AvapTiraDuvidas { get; set; }
         public virtual ICollection<FinaParcelasAlunos> FinaParcelasAlunos { get; set; }

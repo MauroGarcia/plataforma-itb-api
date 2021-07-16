@@ -102,6 +102,21 @@ namespace PlataformaITB.API.Controllers
 
             return new OkObjectResult(new { success = true, message = "Matriculas atualizadas." });
         }
+
+        [HttpPost("codigo-matricula/{codigoMatricula}/ajusteProficiencia")]
+        public IActionResult CorrigeProficienciaMatricula(string codigoMatricula)
+        {
+            try
+            {
+                _matriculaService.CorrigeProficienciaMatricula(codigoMatricula);
+            }
+            catch (Exception e)
+            {
+                return new BadRequestObjectResult(new { success = false, message = e.Message });
+            }
+
+            return new OkObjectResult(new { success = true, message = string.Empty });
+        }
     }
 
     public class AtualizarCodigoExternoModel

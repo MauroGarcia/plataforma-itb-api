@@ -247,5 +247,43 @@ namespace PlataformaITB.API.Services
                 }
             }
         }
+
+        public void CorrigeProficienciaMatricula(string codigoMatricula)
+        {
+            var matricula = _itbDadosContext.PedaMatriculas.Include(c => c.IdAlunoNavigation)
+                                               .FirstOrDefault(x => x.CodigoMatricula.Equals(codigoMatricula));
+
+            if (matricula == null)
+                throw new NullReferenceException("Matrícula não encontrada");
+
+            using (var dbContextTransaction = _itbDadosContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var componentesMatricula = _itbDadosContext.PedaCursosModulos.Where(c => c.IdCurso == matricula.IdCurso).ToList();
+                    componentesMatricula.ForEach(m =>
+                    {
+                        var proficienciaAluno = _itbDadosContext.AcadProficienciaAcademica.Where(p => p.IdMatricula == matricula.IdMatricula).ToList();
+
+                        if (proficienciaAluno.Any(x => x.IdModulo == m.IdModulo))
+                            return;
+
+                        var proficiencia = new AcadProficienciaAcademica();
+                        proficiencia.IdMatricula = matricula.IdMatricula;
+                        proficiencia.IdModulo = m.IdModulo; // Componente
+
+                        _itbDadosContext.AcadProficienciaAcademica.Add(proficiencia);
+                        _itbDadosContext.SaveChanges();
+                    });
+
+                    dbContextTransaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    dbContextTransaction.Rollback();
+                    throw new Exception("Erro ao atualizar matrícula");
+                }
+            }               
+        }
     }
 }

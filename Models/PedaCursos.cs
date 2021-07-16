@@ -9,6 +9,8 @@ namespace PlataformaITB.API.Models
         {
             AvapMensagemTutoria = new HashSet<AvapMensagemTutoria>();
             AvapTiraDuvidas = new HashSet<AvapTiraDuvidas>();
+            PedaCursosBlocosTematicos = new HashSet<PedaCursosBlocosTematicos>();
+            PedaCursosModulos = new HashSet<PedaCursosModulos>();
             PedaMatriculas = new HashSet<PedaMatriculas>();
         }
 
@@ -56,6 +58,8 @@ namespace PlataformaITB.API.Models
 
         public virtual ICollection<AvapMensagemTutoria> AvapMensagemTutoria { get; set; }
         public virtual ICollection<AvapTiraDuvidas> AvapTiraDuvidas { get; set; }
+        public virtual ICollection<PedaCursosBlocosTematicos> PedaCursosBlocosTematicos { get; set; }
+        public virtual ICollection<PedaCursosModulos> PedaCursosModulos { get; set; }
         public virtual ICollection<PedaMatriculas> PedaMatriculas { get; set; }
     }
 }

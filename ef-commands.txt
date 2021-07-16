@@ -1,4 +1,4 @@
-﻿Scaffold-DbContext -Connection Name=ConnectionApplicationData Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Context ItbDadosContext -t Peda_Matriculas, Peda_CursosTurmas, Peda_Cursos, Peda_Alunos, Fina_ParcelasAlunos, Acad_DocumentosAlunosPostados, Mktg_BonusAlunos, Avap_MensagemTutoria, Avap_TiraDuvidas, Peda_MatriculasAnotacoesAulas, Peda_MatriculasExcluidas, Fina_ParcelasControle, Peda_MatriculasAnotacoes -f
+﻿Scaffold-DbContext -Connection Name=ConnectionApplicationData Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Context ItbDadosContext -t Peda_Matriculas, Peda_CursosTurmas, Peda_Cursos, Peda_Alunos, Fina_ParcelasAlunos, Acad_DocumentosAlunosPostados, Mktg_BonusAlunos, Avap_MensagemTutoria, Avap_TiraDuvidas, Peda_MatriculasAnotacoesAulas, Peda_MatriculasExcluidas, Fina_ParcelasControle, Peda_MatriculasAnotacoes, Peda_CursosModulos, Acad_ProficienciaAcademica, Peda_CursosBlocosTematicos -f
 
 install-package Microsoft.EntityFrameworkCore.Proxies
 

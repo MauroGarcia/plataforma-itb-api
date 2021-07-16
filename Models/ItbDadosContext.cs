@@ -16,6 +16,7 @@ namespace PlataformaITB.API.Models
         }
 
         public virtual DbSet<AcadDocumentosAlunosPostados> AcadDocumentosAlunosPostados { get; set; }
+        public virtual DbSet<AcadProficienciaAcademica> AcadProficienciaAcademica { get; set; }
         public virtual DbSet<AvapMensagemTutoria> AvapMensagemTutoria { get; set; }
         public virtual DbSet<AvapTiraDuvidas> AvapTiraDuvidas { get; set; }
         public virtual DbSet<FinaParcelasAlunos> FinaParcelasAlunos { get; set; }
@@ -23,6 +24,8 @@ namespace PlataformaITB.API.Models
         public virtual DbSet<MktgBonusAlunos> MktgBonusAlunos { get; set; }
         public virtual DbSet<PedaAlunos> PedaAlunos { get; set; }
         public virtual DbSet<PedaCursos> PedaCursos { get; set; }
+        public virtual DbSet<PedaCursosBlocosTematicos> PedaCursosBlocosTematicos { get; set; }
+        public virtual DbSet<PedaCursosModulos> PedaCursosModulos { get; set; }
         public virtual DbSet<PedaCursosTurmas> PedaCursosTurmas { get; set; }
         public virtual DbSet<PedaMatriculas> PedaMatriculas { get; set; }
         public virtual DbSet<PedaMatriculasAnotacoes> PedaMatriculasAnotacoes { get; set; }
@@ -90,6 +93,54 @@ namespace PlataformaITB.API.Models
                     .HasForeignKey(d => d.IdMatricula)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Acad_DocumentosAlunosPostados_Peda_Matriculas");
+            });
+
+            modelBuilder.Entity<AcadProficienciaAcademica>(entity =>
+            {
+                entity.HasKey(e => e.IdProficiencia);
+
+                entity.ToTable("Acad_ProficienciaAcademica");
+
+                entity.HasIndex(e => e.IdMatricula)
+                    .HasName("IX_Acad_ProficienciaAcademica");
+
+                entity.HasIndex(e => e.IdModulo)
+                    .HasName("nci_wi_Acad_ProficienciaAcademica_9976BBFACDF1584AB653AEDB56E59B4F");
+
+                entity.HasIndex(e => new { e.IdMatricula, e.IdModulo })
+                    .HasName("IX_Acad_ProficienciaAcademica_1")
+                    .IsUnique();
+
+                entity.Property(e => e.IdProficiencia).HasColumnName("idProficiencia");
+
+                entity.Property(e => e.IdMatricula).HasColumnName("idMatricula");
+
+                entity.Property(e => e.IdModulo).HasColumnName("idModulo");
+
+                entity.Property(e => e.IsNivelamento).HasColumnName("isNivelamento");
+
+                entity.Property(e => e.IsProficiente).HasColumnName("isProficiente");
+
+                entity.Property(e => e.IsProficienteHs).HasColumnName("isProficienteHs");
+
+                entity.Property(e => e.IsProficientePts).HasColumnName("isProficientePts");
+
+                entity.Property(e => e.IsRecuperacao).HasColumnName("isRecuperacao");
+
+                entity.Property(e => e.IsSubstitutiva).HasColumnName("isSubstitutiva");
+
+                entity.Property(e => e.PtsAc).HasDefaultValueSql("((0))");
+
+                entity.HasOne(d => d.IdMatriculaNavigation)
+                    .WithMany(p => p.AcadProficienciaAcademica)
+                    .HasForeignKey(d => d.IdMatricula)
+                    .HasConstraintName("FK_Acad_ProficienciaAcademica_Peda_Matriculas");
+
+                entity.HasOne(d => d.IdModuloNavigation)
+                    .WithMany(p => p.AcadProficienciaAcademica)
+                    .HasForeignKey(d => d.IdModulo)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Acad_ProficienciaAcademica_Peda_CursosModulos");
             });
 
             modelBuilder.Entity<AvapMensagemTutoria>(entity =>
@@ -793,6 +844,100 @@ namespace PlataformaITB.API.Models
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<PedaCursosBlocosTematicos>(entity =>
+            {
+                entity.HasKey(e => e.IdBloco);
+
+                entity.ToTable("Peda_CursosBlocosTematicos");
+
+                entity.Property(e => e.IdBloco).HasColumnName("idBloco");
+
+                entity.Property(e => e.BlocoTematico)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Horas).HasColumnType("decimal(18, 0)");
+
+                entity.Property(e => e.IdCurso).HasColumnName("idCurso");
+
+                entity.Property(e => e.Inicio)
+                    .HasColumnName("inicio")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IsAtivo)
+                    .IsRequired()
+                    .HasColumnName("isAtivo")
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.PeriodoFim).HasColumnType("datetime");
+
+                entity.Property(e => e.PeriodoIni).HasColumnType("datetime");
+
+                entity.HasOne(d => d.IdCursoNavigation)
+                    .WithMany(p => p.PedaCursosBlocosTematicos)
+                    .HasForeignKey(d => d.IdCurso)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Peda_CursosBlocosTematicos_Peda_Cursos");
+            });
+
+            modelBuilder.Entity<PedaCursosModulos>(entity =>
+            {
+                entity.HasKey(e => e.IdModulo);
+
+                entity.ToTable("Peda_CursosModulos");
+
+                entity.HasIndex(e => e.IdBloco)
+                    .HasName("IX_Peda_CursosModulos_1");
+
+                entity.HasIndex(e => e.IdCurso)
+                    .HasName("IX_Peda_CursosModulos_2");
+
+                entity.HasIndex(e => e.NumeroModulo)
+                    .HasName("IX_Peda_CursosModulos");
+
+                entity.HasIndex(e => new { e.IdBloco, e.IdCurso, e.IsAtivo })
+                    .HasName("nci_wi_Peda_CursosModulos_3A11F00B5412099A3FCD4388B582846A");
+
+                entity.Property(e => e.IdModulo).HasColumnName("idModulo");
+
+                entity.Property(e => e.AssuntoAbordado)
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                entity.Property(e => e.IdBloco).HasColumnName("idBloco");
+
+                entity.Property(e => e.IdCurso).HasColumnName("idCurso");
+
+                entity.Property(e => e.IsAtivo)
+                    .IsRequired()
+                    .HasColumnName("isAtivo")
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.IsDisponivelAva).HasColumnName("isDisponivelAva");
+
+                entity.Property(e => e.IsEstagio).HasColumnName("isEstagio");
+
+                entity.Property(e => e.NomeModulo)
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .IsFixedLength();
+
+                entity.Property(e => e.NumeroModulo).HasDefaultValueSql("((1))");
+
+                entity.HasOne(d => d.IdBlocoNavigation)
+                    .WithMany(p => p.PedaCursosModulos)
+                    .HasForeignKey(d => d.IdBloco)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Peda_CursosModulos_Peda_CursosBlocosTematicos");
+
+                entity.HasOne(d => d.IdCursoNavigation)
+                    .WithMany(p => p.PedaCursosModulos)
+                    .HasForeignKey(d => d.IdCurso)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Peda_CursosModulos_Peda_Cursos");
+            });
+
             modelBuilder.Entity<PedaCursosTurmas>(entity =>
             {
                 entity.HasKey(e => e.IdTurma)
@@ -930,6 +1075,10 @@ namespace PlataformaITB.API.Models
 
                 entity.Property(e => e.DataInicioAtividades).HasColumnType("datetime");
 
+                entity.Property(e => e.DataInicioPeriodoExperimental)
+                    .HasColumnType("datetime")
+                    .HasComment("");
+
                 entity.Property(e => e.DataLimitePagoMatricula)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
@@ -1021,6 +1170,11 @@ namespace PlataformaITB.API.Models
                 entity.Property(e => e.IsDocumentacaoPostada).HasColumnName("isDocumentacaoPostada");
 
                 entity.Property(e => e.IsEvadiu).HasColumnName("isEvadiu");
+
+                entity.Property(e => e.IsExperimental)
+                    .HasColumnName("isExperimental")
+                    .HasDefaultValueSql("('(0)')")
+                    .HasComment("");
 
                 entity.Property(e => e.IsFormacaoTecnica)
                     .HasColumnName("isFormacaoTecnica")
@@ -1122,6 +1276,12 @@ namespace PlataformaITB.API.Models
                     .HasForeignKey(d => d.IdAluno)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Peda_Matriculas_Peda_Alunos");
+
+                entity.HasOne(d => d.IdBlocoAtualNavigation)
+                    .WithMany(p => p.PedaMatriculas)
+                    .HasForeignKey(d => d.IdBlocoAtual)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Peda_Matriculas_Peda_CursosBlocosTematicos");
 
                 entity.HasOne(d => d.IdCursoNavigation)
                     .WithMany(p => p.PedaMatriculas)
