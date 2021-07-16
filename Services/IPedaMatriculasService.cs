@@ -16,5 +16,6 @@ namespace PlataformaITB.API.Services
         public PedaMatriculas ObterMatriculaPorCodigoMatricula(string codigoMatricula);
 
         public void CancelarMatricula(string codigoMatricula, string motivoCancelamento, string loginUsuario);
+        void AtualizarCodigoExternoMatriculas(int codigoPolo, int codigoCorp, int codigoHub);
     }
 }

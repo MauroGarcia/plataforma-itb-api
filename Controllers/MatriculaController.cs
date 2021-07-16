@@ -87,6 +87,28 @@ namespace PlataformaITB.API.Controllers
         {
             return Ok();
         }
+
+        [HttpPost("atualizar-codigo-externo")]
+        public IActionResult AtualizarCodigoExterno([FromBody] AtualizarCodigoExternoModel atualizarCodigoExternoModel)
+        {
+            try
+            {
+                _matriculaService.AtualizarCodigoExternoMatriculas(atualizarCodigoExternoModel.CodigoPolo, atualizarCodigoExternoModel.CodigoCorp, atualizarCodigoExternoModel.CodigoHub);
+            }
+            catch (Exception e)
+            {
+                return new BadRequestObjectResult(new { success = false, message = e.Message });
+            }
+
+            return new OkObjectResult(new { success = true, message = "Matriculas atualizadas." });
+        }
+    }
+
+    public class AtualizarCodigoExternoModel
+    {
+        public int CodigoPolo { get; set; }
+        public int CodigoCorp { get; set; }
+        public int CodigoHub { get; set; }
     }
 
     public class CancelarMatriculaModel

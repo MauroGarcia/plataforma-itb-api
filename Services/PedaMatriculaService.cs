@@ -223,5 +223,29 @@ namespace PlataformaITB.API.Services
             return matricula;
             //return _itbDadosContext.PedaMatriculas.Where(matricula => matricula.IdMatricula == id ).Select(c => new { c.IdMatricula, c.IdAluno, c.IdAlunoNavigation });
         }
+
+        public void AtualizarCodigoExternoMatriculas(int codigoPolo, int codigoCorp, int codigoHub)
+        {
+            var matriculas = _itbDadosContext.PedaMatriculas.Where(c => c.Identificacao01 == codigoCorp.ToString() && c.IdFrqa == codigoPolo).ToList();
+
+            if (matriculas == null || matriculas.Count == 0)
+                throw new Exception("Nenhuma matrícula encontrada para esse código CORP");
+
+            using (var dbContextTransaction = _itbDadosContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    matriculas.ForEach(m => m.Identificacao01 = codigoHub.ToString());
+
+                    _itbDadosContext.SaveChanges();
+                    dbContextTransaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    dbContextTransaction.Rollback();
+                    throw new Exception("Erro ao atualizar matrículas");
+                }
+            }
+        }
     }
 }
